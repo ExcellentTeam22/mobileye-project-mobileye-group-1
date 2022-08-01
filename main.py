@@ -7,7 +7,7 @@ try:
     import argparse
 
     import numpy as np
-    from scipy import signal as sg
+    from scipy import signal as sg, ndimage
     from scipy.ndimage import maximum_filter
 
     from PIL import Image
@@ -18,14 +18,26 @@ except ImportError:
     raise
 
 
-def convert_image_to_array(path: str) -> np.array():
+def convert_image_to_array(path: str) :
     image = cv2.imread(path)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower = np.array([0, 50, 50])
-    upper = np.array([10, 255, 255])
-    mask = cv2.inRange(image, lower, upper)
-    cv2.imshow('mask', mask)
-    return np.array(mask)
+    # lower = np.array([0, 50, 50])
+    # upper = np.array([10, 255, 255])
+    # mask = cv2.inRange(image, lower, upper)
+    mask = image[:, :, [2]]
+    plt.imshow(mask)
+    return mask
+
+
+def one_image():
+    kernel = convert_image_to_array("kernel.png")
+    image = convert_image_to_array("test_images\\berlin_000521_000019_leftImg8bit.png")
+    #filter_image = cv2.filter2D(image, -1,kernel)
+    filter_image = ndimage.convolve(kernel,image,mode='constant', cval=0.0)
+    plt.imshow(filter_image)
+    plt.show(block=True)
+#    cv2.waitKey()
+    print(filter_image)
+
 
 
 def find_tfl_lights(c_image: np.ndarray, **kwargs):
@@ -35,7 +47,8 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     :param kwargs: Whatever config you want to pass in here
     :return: 4-tuple of x_red, y_red, x_green, y_green
     """
-    
+
+
 
 
 
@@ -119,7 +132,7 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-
-    main()
+    one_image()
+    #main()
 
 
