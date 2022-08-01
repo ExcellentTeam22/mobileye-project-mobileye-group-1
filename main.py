@@ -1,3 +1,5 @@
+import cv2
+
 try:
     import os
     import json
@@ -15,6 +17,17 @@ except ImportError:
     print("Need to fix the installation")
     raise
 
+
+def convert_image_to_array(path: str) -> np.array():
+    image = cv2.imread(path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower = np.array([0, 50, 50])
+    upper = np.array([10, 255, 255])
+    mask = cv2.inRange(image, lower, upper)
+    cv2.imshow('mask', mask)
+    return np.array(mask)
+
+
 def find_tfl_lights(c_image: np.ndarray, **kwargs):
     """
     Detect candidates for TFL lights. Use c_image, kwargs and you imagination to implement
@@ -22,11 +35,14 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     :param kwargs: Whatever config you want to pass in here
     :return: 4-tuple of x_red, y_red, x_green, y_green
     """
+    
+
 
 
     ### WRITE YOUR CODE HERE ###
     ### USE HELPER FUNCTIONS ###
     return [500, 510, 520], [500, 500, 500], [700, 710], [500, 500]
+
 
 ### GIVEN CODE TO TEST YOUR IMPLENTATION AND PLOT THE PICTURES
 def show_image_and_gt(image, objs, fig_num=None):
@@ -40,6 +56,7 @@ def show_image_and_gt(image, objs, fig_num=None):
             labels.add(o['label'])
         if len(labels) > 1:
             plt.legend()
+
 
 def test_find_tfl_lights(image_path, json_path=None, fig_num=None):
     """
