@@ -38,11 +38,14 @@ def convert_image_to_array(path: str) :
 def one_image():
     #kernel = convert_image_to_array("kernel.png")
 
-    kernel = (plt.imread("kernel.png")/255)
+    kernel = (plt.imread("kernel.png") / 255)
     kernel = kernel[:, :, 0]
-    kernel-=kernel.mean()
-    image = convert_image_to_array("test_images\\berlin_000522_000019_leftImg8bit.png")
-    filter_image = scipy.ndimage.convolve(image,kernel)
+    kernel -= np.mean(kernel)
+    print(kernel)
+    image = plt.imread("test_images\\berlin_000522_000019_leftImg8bit.png")
+    image = image[:, :, 0]
+    print(image)
+    filter_image = scipy.ndimage.convolve(image, kernel)
     plt.imshow(filter_image)
     plt.show(block=True)
     print(filter_image)
