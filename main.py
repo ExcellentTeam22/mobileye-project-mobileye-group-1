@@ -156,7 +156,6 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    #one_image()
     main()
     #test_find_tfl_lights("test_images\\berlin_000522_000019_leftImg8bit.png")
 
