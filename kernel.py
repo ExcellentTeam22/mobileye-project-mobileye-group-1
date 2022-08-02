@@ -75,8 +75,8 @@ import matplotlib.pyplot as plt
 def main():
     kernel = (plt.imread("kernel.png")/255)
     kernel = kernel[:, :, 0]
-    kernel -= kernel.mean()
-    #print(kernel)
+    kernel -= np.mean(kernel)
+    print(kernel)
     img = plt.imread("test_images\\berlin_000522_000019_leftImg8bit.png")
     img = img[:, :, 0]
     array = scipy.ndimage.convolve(img, kernel)
