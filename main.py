@@ -26,17 +26,7 @@ def convert_image_to_array(path: str) :
     return implt
 
 
-    # image = cv2.imread(path)
-    # # lower = np.array([0, 50, 50])
-    # # upper = np.array([10, 255, 255])
-    # # mask = cv2.inRange(image, lower, upper)
-    # mask = image[:, :, [2]]
-    # plt.imshow(mask)
-    # return mask
-
-
 def one_image():
-    #kernel = convert_image_to_array("kernel.png")
 
     kernel = (plt.imread("kernel.png") / 255)
     kernel = kernel[:, :, 0]
@@ -55,10 +45,10 @@ def one_image():
     ax2 = fig.add_subplot()  # right side
     result = ndimage.maximum_filter(filter_image, size=20)
     save_anc=np.where(result > 0.1)
-    ax2.imshow(result)
-    print(result)
-    plt.show()
-    return(save_anc)
+   # ax2.imshow(result)
+    #print(result)
+    #plt.show()
+    return save_anc
 
 
 
@@ -97,7 +87,6 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
 
     ### WRITE YOUR CODE HERE ###
     ### USE HELPER FUNCTIONS ###
-    return [0.0033405 ,0.00080224 ,0.0033405], [0.00021472, 0.00026123, 0.00021472], [700, 710], [500, 500]
 
 
 ### GIVEN CODE TO TEST YOUR IMPLENTATION AND PLOT THE PICTURES
@@ -169,8 +158,7 @@ def main(argv=None):
 
     if len(flist):
         print("You should now see some images, with the ground truth marked on them. Close all to quit.")
-    else:
-        print("Bad configuration?? Didn't find any picture to show")
+    else:        print("Bad configuration?? Didn't find any picture to show")
     plt.show(block=True)
 
 
