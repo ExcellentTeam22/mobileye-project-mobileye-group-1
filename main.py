@@ -70,15 +70,22 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     print(image)
     filter_image = scipy.ndimage.convolve(image, kernel)
     #plt.imshow(filter_image)
-    #plt.show(block=True)
-    print(filter_image)
-    print("max")
-    result = ndimage.maximum_filter(filter_image, size=10)
-    save_anc = np.where(result > 0.1)
-    #ax2.imshow(result)
-    print(result)
+    #plt.show()
+    #print(filter_image)
+    #print("max")
+    max_filter_image=ndimage.maximum_filter(filter_image, 30,mode='nearest')
+
+    plt.imshow(max_filter_image)
     plt.show()
-    return save_anc[1], save_anc[0], [], []
+
+    threshold =(max_filter_image>=0.05)
+    maxima = (filter_image ==max_filter_image)
+
+    res = np.where(1 == (maxima * threshold))
+
+    plt.show()
+
+    return res[1], res[0], [], []
 
 
 
