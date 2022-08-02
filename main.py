@@ -75,13 +75,17 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     #print("max")
     max_filter_image=ndimage.maximum_filter(filter_image, 30,mode='nearest')
 
-    plt.imshow(max_filter_image)
+    plt.imshow(max_filter_image)#print image with opacity filter
     plt.show()
 
-    threshold =(max_filter_image>=0.05)
-    maxima = (filter_image ==max_filter_image)
+    threshold = (max_filter_image >= 0.04)
+
+    maxima = (filter_image == max_filter_image)
 
     res = np.where(1 == (maxima * threshold))
+    for i in range(len(res[0])):
+        kwargs[res[0][i], res[1][i]] = max_filter_image[res[0][i]][res[1][i]]
+    print(kwargs)
 
     plt.show()
 
@@ -165,5 +169,4 @@ def main(argv=None):
 if __name__ == '__main__':
     main()
     #test_find_tfl_lights("test_images\\berlin_000522_000019_leftImg8bit.png")
-
 
