@@ -8,7 +8,7 @@ try:
     import argparse
 
     import numpy as np
-    from scipy import signal as sg, ndimage
+    from scipy import signal as sg, ndimage,misc
     from scipy.ndimage import maximum_filter
 
     from PIL import Image
@@ -49,6 +49,17 @@ def one_image():
     plt.imshow(filter_image)
     plt.show(block=True)
     print(filter_image)
+    print("max")
+    fig = plt.figure()
+    ax1 = fig.add_subplot()  # left side
+    ax2 = fig.add_subplot()  # right side
+    result = ndimage.maximum_filter(filter_image, size=20)
+    save_anc=np.where(result > 0.1)
+    ax2.imshow(result)
+    print(result)
+    plt.show()
+    return(save_anc)
+
 
 
 
@@ -59,14 +70,34 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     :param kwargs: Whatever config you want to pass in here
     :return: 4-tuple of x_red, y_red, x_green, y_green
     """
-
+    kernel = (plt.imread("kernel.png") / 255)
+    kernel = kernel[:, :, 0]
+    kernel -= np.mean(kernel)
+    print(kernel)
+    image = plt.imread("test_images\\berlin_000522_000019_leftImg8bit.png")
+    image = image[:, :, 0]
+    print(image)
+    filter_image = scipy.ndimage.convolve(image, kernel)
+    plt.imshow(filter_image)
+    plt.show(block=True)
+    print(filter_image)
+    print("max")
+    fig = plt.figure()
+    ax1 = fig.add_subplot()  # left side
+    ax2 = fig.add_subplot()  # right side
+    result = ndimage.maximum_filter(filter_image, size=20)
+    save_anc = np.where(result > 0.1)
+    ax2.imshow(result)
+    print(result)
+    plt.show()
+    return save_anc[0],save_anc[1],[],[]
 
 
 
 
     ### WRITE YOUR CODE HERE ###
     ### USE HELPER FUNCTIONS ###
-    return [500, 510, 520], [500, 500, 500], [700, 710], [500, 500]
+    return [0.0033405 ,0.00080224 ,0.0033405], [0.00021472, 0.00026123, 0.00021472], [700, 710], [500, 500]
 
 
 ### GIVEN CODE TO TEST YOUR IMPLENTATION AND PLOT THE PICTURES
@@ -144,7 +175,7 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    one_image()
-    #main()
+    #one_image()
+    main()
 
 
