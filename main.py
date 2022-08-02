@@ -88,7 +88,7 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     #ax2.imshow(result)
     print(result)
     plt.show()
-    return save_anc[1],save_anc[0],[],[]
+    return save_anc[1], save_anc[0], [], []
 
 
 ### GIVEN CODE TO TEST YOUR IMPLENTATION AND PLOT THE PICTURES
