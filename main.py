@@ -64,29 +64,22 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     kernel = kernel[:, :, 0]
     kernel -= np.mean(kernel)
     print(kernel)
-    image = plt.imread("test_images\\berlin_000522_000019_leftImg8bit.png")
+    #image = plt.imread(c_image)
+    image=c_image
     image = image[:, :, 0]
     print(image)
     filter_image = scipy.ndimage.convolve(image, kernel)
-    plt.imshow(filter_image)
-    plt.show(block=True)
+    #plt.imshow(filter_image)
+    #plt.show(block=True)
     print(filter_image)
     print("max")
-    fig = plt.figure()
-    ax1 = fig.add_subplot()  # left side
-    ax2 = fig.add_subplot()  # right side
-    result = ndimage.maximum_filter(filter_image, size=20)
+    result = ndimage.maximum_filter(filter_image, size=10)
     save_anc = np.where(result > 0.1)
-    ax2.imshow(result)
+    #ax2.imshow(result)
     print(result)
     plt.show()
-    return save_anc[0],save_anc[1],[],[]
+    return save_anc[1],save_anc[0],[],[]
 
-
-
-
-    ### WRITE YOUR CODE HERE ###
-    ### USE HELPER FUNCTIONS ###
 
 
 ### GIVEN CODE TO TEST YOUR IMPLENTATION AND PLOT THE PICTURES
@@ -107,7 +100,7 @@ def test_find_tfl_lights(image_path, json_path=None, fig_num=None):
     """
     Run the attention code
     """
-    image = np.array(Image.open(image_path))
+    image = np.array(plt.imread(image_path))
     if json_path is None:
         objects = None
     else:
@@ -165,5 +158,6 @@ def main(argv=None):
 if __name__ == '__main__':
     #one_image()
     main()
+    #test_find_tfl_lights("test_images\\berlin_000522_000019_leftImg8bit.png")
 
 
