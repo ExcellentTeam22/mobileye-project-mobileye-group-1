@@ -1,4 +1,5 @@
 import cv2
+import scipy
 
 try:
     import os
@@ -19,23 +20,31 @@ except ImportError:
 
 
 def convert_image_to_array(path: str) :
-    image = cv2.imread(path)
-    # lower = np.array([0, 50, 50])
-    # upper = np.array([10, 255, 255])
-    # mask = cv2.inRange(image, lower, upper)
-    mask = image[:, :, [2]]
-    plt.imshow(mask)
-    return mask
+    implt = plt.imread(path)
+    maplt = implt[:, :, 0]
+    plt.imshow(maplt)
+    return implt
+
+
+    # image = cv2.imread(path)
+    # # lower = np.array([0, 50, 50])
+    # # upper = np.array([10, 255, 255])
+    # # mask = cv2.inRange(image, lower, upper)
+    # mask = image[:, :, [2]]
+    # plt.imshow(mask)
+    # return mask
 
 
 def one_image():
-    kernel = convert_image_to_array("kernel.png")
-    image = convert_image_to_array("test_images\\berlin_000521_000019_leftImg8bit.png")
-    #filter_image = cv2.filter2D(image, -1,kernel)
-    filter_image = ndimage.convolve(kernel,image,mode='constant', cval=0.0)
+    #kernel = convert_image_to_array("kernel.png")
+
+    kernel = (plt.imread("kernel.png")/255)
+    kernel = kernel[:, :, 0]
+    kernel-=kernel.mean()
+    image = convert_image_to_array("test_images\\berlin_000522_000019_leftImg8bit.png")
+    filter_image = scipy.ndimage.convolve(image,kernel)
     plt.imshow(filter_image)
     plt.show(block=True)
-#    cv2.waitKey()
     print(filter_image)
 
 
