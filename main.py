@@ -78,7 +78,7 @@ def find_tfl_lights(c_image: np.ndarray, **kwargs):
     #ax2.imshow(result)
     print(result)
     plt.show()
-    return save_anc[1],save_anc[0],[],[]
+    return save_anc[1], save_anc[0], [], []
 
 
 
@@ -156,7 +156,6 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    #one_image()
     main()
     #test_find_tfl_lights("test_images\\berlin_000522_000019_leftImg8bit.png")
 
