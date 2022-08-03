@@ -1,11 +1,13 @@
 import cv2
 import scipy
-
+import pandas as pd
 try:
     import os
     import json
     import glob
     import argparse
+    import h5py
+
 
     import numpy as np
     from scipy import signal as sg, ndimage,misc
@@ -163,7 +165,10 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    main()
+    df = pd.read_hdf('attention_results.h5')
+    pd.set_option('display.max_rows', None)
+    print(df)
+    # main()
     #test_find_tfl_lights("test_images\\berlin_000522_000019_leftImg8bit.png")
 
 
