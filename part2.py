@@ -23,25 +23,29 @@ except ImportError:
     raise
 
 
-
+FILTER_PATH="test_images/gtFine/train/bochum"
+SRC_PATH="C:/Users/nechama/Desktop/bootcamp/mobileye/bochum"
 
 def crop_image(img_path: str, x: int, y: int, zoom: int):
-    im = Image.open("r"+img_path)
+    im = Image.open(SRC_PATH+'/'+img_path)
     width, height = im.size
     # Setting the points for cropped image
     # Cropped image of above dimension
     # (It will not change original image)
     #im1 = im.crop((left, top, right, bottom))
 
-    im1 = im.crop(x-15, y+30, x+15, y-30)
+    im1 = im.crop((x-15, y-30, x+15, y+30))
 
     # Shows the image in image viewer
-    im1.show()
+
+    plt.imshow(im1)  # print image with opacity filter
+    plt.show()
 
 
 if __name__ == '__main__':
     df = pd.read_hdf('attention_results.h5')
     pd.set_option('display.max_rows', None)
     print(df)
-
-    crop_image()
+    for index, row in df.iterrows():
+        if(str(row["path"]).startswith("bochum")):
+            crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'])
