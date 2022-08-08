@@ -19,8 +19,8 @@ except ImportError:
 
 
 
-FILTER_PATH = "gtFine_trainvaltest/gtFine/train/aachen"
-SRC_PATH = "leftImg8bit/train/aachen"
+FILTER_PATH = "test_images/gtFine/train/bochum"
+SRC_PATH = "bochum"
 
 
 def get_table() -> object:
@@ -33,7 +33,7 @@ def get_table() -> object:
 def crop_images_from_table():
     counter=0
     for index, row in df.iterrows():
-        if str(row["path"]):
+        if str(row["path"]).startswith("bochum"):
             crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'],counter)
             counter+=1
 
