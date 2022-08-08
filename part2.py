@@ -47,7 +47,7 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int):
     pixel_arr = np.array(im_of_label)
     save_orange_pixel = np.where(pixel_arr == [250, 170, 30, 255])
     print(len(save_orange_pixel[0]))
-    if len(save_orange_pixel[0]) >4000:
+    if len(save_orange_pixel[0]) >2000:
         im.crop((x - 15, y - 30, x + 15, y + 30)).save("crop_images/crop" + str(index) + ".png", format="png")
         im_of_label.save("crop_images/crop" + str(index) + "label.png", format="png")
 
