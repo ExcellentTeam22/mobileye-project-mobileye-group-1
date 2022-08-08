@@ -24,10 +24,11 @@ except ImportError:
 
 
 FILTER_PATH="test_images/gtFine/train/bochum"
-SRC_PATH="C:/Users/nechama/Desktop/bootcamp/mobileye/bochum"
+SRC_PATH="bochum"
 
 def crop_image(img_path: str, x: int, y: int, zoom: int):
     im = Image.open(SRC_PATH+'/'+img_path)
+
     width, height = im.size
     # Setting the points for cropped image
     # Cropped image of above dimension
