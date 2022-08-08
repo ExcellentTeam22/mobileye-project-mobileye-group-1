@@ -18,6 +18,7 @@ except ImportError:
     raise
 
 
+
 FILTER_PATH = "gtFine_trainvaltest/gtFine/train/aachen"
 SRC_PATH = "leftImg8bit/train/aachen"
 
