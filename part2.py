@@ -23,6 +23,7 @@ except ImportError:
     raise
 
 
+
 FILTER_PATH = "test_images/gtFine/train/bochum"
 SRC_PATH = "bochum"
 
@@ -44,6 +45,7 @@ def crop_images_from_table():
     counter = 0
     for index, row in df.iterrows():
         if str(row["path"]).startswith("bochum"):
+
             result_of_image=crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'], counter)
             df2 = {'Path': row["path"], 'x': row['x'], 'y': row['y'], 'zoom': row['zoom'], 'col': row['col'],
                    't/f/i': result_of_image}
@@ -54,6 +56,8 @@ def crop_images_from_table():
             if counter==34:
                 break
     df_result.to_hdf('data.h5', key='df_result')
+            crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'],counter)
+
 
 
 def crop_image(img_path: str, x: int, y: int, zoom: int, index: int):
