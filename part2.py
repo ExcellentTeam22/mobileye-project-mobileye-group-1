@@ -42,7 +42,7 @@ def crop_images_from_table():
                        'zoom': [],
                        'col': [],
                        't/f/i': []})
-    counter=0
+    counter = 0
     for index, row in df.iterrows():
         if str(row["path"]).startswith("bochum"):
 
