@@ -22,45 +22,54 @@ except ImportError:
     print("Need to fix the installation")
     raise
 
-
-
 FILTER_PATH = "test_images/gtFine/train/bochum"
 SRC_PATH = "bochum"
 
 
 def get_table() -> object:
-    save_table = pd.read_hdf('attention_results.h5')
+    save_table = pd.read_hdf('part2NN/attention_results/attention_results.h5')
     pd.set_option('display.max_rows', None)
     print(save_table)
     return save_table
 
 
 def crop_images_from_table():
-    df_result = pd.DataFrame({'Path': [],
-                       'x': [],
-                       'y': [],
-                       'zoom': [],
-                       'col': [],
-                       't/f/i': []})
+    df_result = pd.DataFrame({'seq':[],
+                        'x0': [],
+                        'x1':[],
+                        'y0': [],
+                        'y1': [],
+                        'zoom': [],
+                        'col': [],
+                        'is_ignore':[],
+                              'is_true': []
+                              })
     counter = 0
     for index, row in df.iterrows():
+        if row['x'] is None:
+            continue
         if str(row["path"]).startswith("bochum"):
+            result_of_image = crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'], counter,row['col'],index)
+            if result_of_image == 'True':
+                is_true = 1
+                is_ignore = 0
+            elif result_of_image == 'Ignore':
+                is_ignore = 1
+                is_true = 0
+            elif result_of_image == 'False':
+                is_true = 0
+                is_ignore = 0
+            df_result=pd.concat([df_result, pd.DataFrame.from_records([{'path': row['path'].replace('leftImg8bit.png','') + row['col']+result_of_image[0]+index+'.png' , 'x0': int(row['x'])+20, 'x1': int(row['x'])+20, 'y0': int(row['y'])-30,'y1': int(row['y'])+30, 'zoom': row['zoom'], 'col': row['col'],
+                   'is_true':is_true,'is_ignore':is_ignore, 'seq':index}])])
 
-            result_of_image=crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'], counter)
-            df2 = {'Path': row["path"], 'x': row['x'], 'y': row['y'], 'zoom': row['zoom'], 'col': row['col'],
-                   't/f/i': result_of_image}
-            df_result=pd.concat([df_result, pd.DataFrame.from_records([{'Path': row["path"], 'x': row['x'], 'y': row['y'], 'zoom': row['zoom'], 'col': row['col'],
-                   't/f/i': result_of_image}])])
 
             counter += 1
-            if counter==34:
+            if counter==30:
                 break
     df_result.to_hdf('data.h5', key='df_result')
-            crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'],counter)
 
 
-
-def crop_image(img_path: str, x: int, y: int, zoom: int, index: int):
+def crop_image(img_path: str, x: int, y: int, zoom: int, index: int,color:str):
     x_size = 20
     y_size = 30
     im = Image.open(SRC_PATH+'/'+img_path)
@@ -86,8 +95,8 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int):
     else:
         result = "False"
 
-    im.crop((x - x_size, y - y_size, x + x_size, y + y_size)).save("crop_images/" + img_path + result + ".png", format="png")
-    im_of_label.save("crop_images/crop" + str(index) +result+ "label.png", format="png")
+    im.crop((x - x_size, y - y_size, x + x_size, y + y_size)).save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0] + ".png", format="png")
+   # im_of_label.save("crop_images/crop" + str(index) +result+ "label.png", format="png")
     return result
 
 
