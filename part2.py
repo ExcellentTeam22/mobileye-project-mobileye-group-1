@@ -22,14 +22,14 @@ except ImportError:
     print("Need to fix the installation")
     raise
 
-FILTER_PATH = "test_images/gtFine/train/bochum"
-SRC_PATH = "bochum"
+FILTER_PATH = 'gtFine_trainvaltest/gtFine/train/aachen'
+SRC_PATH = 'leftImg8bit/train/aachen'
+
 
 
 def get_table() -> object:
     save_table = pd.read_hdf('part2NN/attention_results/attention_results.h5')
     pd.set_option('display.max_rows', None)
-    print(save_table)
     return save_table
 
 
@@ -48,8 +48,8 @@ def crop_images_from_table():
     for index, row in df.iterrows():
         if row['x'] is None:
             continue
-        if str(row["path"]).startswith("bochum"):
-            result_of_image = crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'], counter,row['col'],index)
+        if str(row["path"]):
+            result_of_image = crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'], index,row['col'])
             if result_of_image == 'True':
                 is_true = 1
                 is_ignore = 0
@@ -59,13 +59,12 @@ def crop_images_from_table():
             elif result_of_image == 'False':
                 is_true = 0
                 is_ignore = 0
-            df_result=pd.concat([df_result, pd.DataFrame.from_records([{'path': row['path'].replace('leftImg8bit.png','') + row['col']+result_of_image[0]+index+'.png' , 'x0': int(row['x'])+20, 'x1': int(row['x'])+20, 'y0': int(row['y'])-30,'y1': int(row['y'])+30, 'zoom': row['zoom'], 'col': row['col'],
+            df_result=pd.concat([df_result, pd.DataFrame.from_records([{'path': row['path'].replace('leftImg8bit.png','') + row['col']+result_of_image[0]+str(index)+'.png' , 'x0': int(row['x'])+20, 'x1': int(row['x'])+20, 'y0': int(row['y'])-30,'y1': int(row['y'])+30, 'zoom': row['zoom'], 'col': row['col'],
                    'is_true':is_true,'is_ignore':is_ignore, 'seq':index}])])
 
 
             counter += 1
-            if counter==30:
-                break
+
     df_result.to_hdf('data.h5', key='df_result')
 
 
@@ -73,36 +72,50 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int,color:str):
     x_size = 20
     y_size = 30
     im = Image.open(SRC_PATH+'/'+img_path)
+ #   im=change_size(im1,x,y,zoom)
+
+
     label_name = img_path.replace("leftImg8bit", "gtFine_color")
 
-    im_label = Image.open(FILTER_PATH+'/'+label_name)
+    im_label1 = Image.open(FILTER_PATH+'/'+label_name)
+
     width, height = im.size
+
+
+    pixel_arr = np.array(im_label1)
+    im_label = clipped_zoom(pixel_arr, zoom)
+
+    data = Image.fromarray(im_label)
+   # plt.imshow(data)
+    #plt.show()
+    im_label=data
+
     im_of_label = im_label.crop((x-x_size, y-y_size, x+x_size, y+y_size))
 
-    pixel_arr_without_zoom = np.array(im_of_label)
 
-    pixel_arr = clipped_zoom(pixel_arr_without_zoom ,zoom)
+    #pixel_arr = clipped_zoom(pixel_arr_without_zoom ,zoom)
 
     save_orange_pixel = np.where(pixel_arr == [250, 170, 30, 255])
 
     num_of_orange_pixel_in_image = check_orange_in_relation_to_picture(im_label, x, y, zoom)
 
-    if len(save_orange_pixel[0])/num_of_orange_pixel_in_image*100 > 55:
+    if len(save_orange_pixel[0])/num_of_orange_pixel_in_image*100 > 60:
         result = "True"
-    elif len(save_orange_pixel[0])/num_of_orange_pixel_in_image*100 >= 45 and len(save_orange_pixel[0]) /\
-            num_of_orange_pixel_in_image * 100 >= 55:
+    elif len(save_orange_pixel[0])/num_of_orange_pixel_in_image*100 >= 60 and len(save_orange_pixel[0]) /\
+            num_of_orange_pixel_in_image * 100 >= 40:
         result = "Ignore"
     else:
         result = "False"
 
-    im.crop((x - x_size, y - y_size, x + x_size, y + y_size)).save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0] + ".png", format="png")
-   # im_of_label.save("crop_images/crop" + str(index) +result+ "label.png", format="png")
+    im.crop((x - x_size, y - y_size, x + x_size, y + y_size)).save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + ".png", format="png")
+    im_of_label.save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + "label.png", format="png")
     return result
 
 
 def check_orange_in_relation_to_picture(image: Image, x, y, zoom):
-    pixel_arr_without_zoom = np.array(image.convert('L'))
-    pixel_arr = clipped_zoom( pixel_arr_without_zoom , zoom)
+    pixel_arr = np.array(image.convert('L'))
+
+    #pixel_arr = clipped_zoom( pixel_arr_without_zoom , zoom)
 
     labs = measure.label(pixel_arr)
     temp = labs[int(y)][int(x)]
@@ -111,6 +124,15 @@ def check_orange_in_relation_to_picture(image: Image, x, y, zoom):
 
     #def check_valid(x,y,add_to_x,add_to_y,image_height,image_width):
     #  if x + add_to_x >image_width:
+
+def change_size(img,x,y, zoom_factor):
+    w, h = img.size
+    zoom2 = zoom_factor*2
+    img = img.crop((x - w / zoom2, y - h / zoom2,
+                    x + w / zoom2, y + h / zoom2))
+    w, h = img.size
+
+    return img.resize((w, h), Image.Resampling.LANCZOS)
 
 
 
@@ -159,6 +181,8 @@ def clipped_zoom(img, zoom_factor, **kwargs):
     else:
         out = img
     return out
+
+
 
 
 if __name__ == '__main__':
