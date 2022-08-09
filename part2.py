@@ -56,7 +56,7 @@ def crop_images_from_table():
             if counter==34:
                 break
     df_result.to_hdf('data.h5', key='df_result')
-            crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'],counter)
+    crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'],counter)
 
 
 
