@@ -415,7 +415,7 @@ class NNResultExaminer:
         plt.grid(True)
         plt.plot(0, 1, 'ro', mfc='none', ms=15)
         plt.plot(0, 1, 'r+', mfc='none', ms=15)
-        plt.text(0, 1, '\n\nPerfect is here', color='r', VerticalAlignment='top', HorizontalAlignment='center')
+        plt.text(0, 1, '\n\nPerfect is here', color='r')
 
     def on_hist_select(self, filtered_data: pd.DataFrame, nne: "NNResultExaminer", bins: List):
         # Show the crops of the filtered_data:
@@ -448,7 +448,7 @@ def nn_examiner_example(scores_h5_filename=r'..\stam_output\scores.h5'):
     results['gt_score'] = results['is_true'] * 1.
 
     # Ignore the ignores...
-    results = results[~results['is_ignore']]
+    results = results[~results['is_ignore'].astype(bool)]
 
     nne = NNResultExaminer(results, metadata['crop_dir'], metadata['full_dir'],
                            values_col='score',

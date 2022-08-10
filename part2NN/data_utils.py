@@ -55,7 +55,7 @@ class TrafficLightDataSet(Dataset):
         with temp_seed(0):
             is_train = np.random.random(len(crop_data)) <= train_ratio
 
-        ignore_ignore = (~crop_data[C.IS_IGNORE]) & kwargs.get('ignore_ignore', True)
+        ignore_ignore = (~crop_data[C.IS_IGNORE].astype(bool)) & kwargs.get('ignore_ignore', True)
 
         self.crop_data = crop_data.loc[(is_train == self.is_train) & ignore_ignore]
 

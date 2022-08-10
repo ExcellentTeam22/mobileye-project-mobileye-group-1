@@ -212,8 +212,8 @@ def examine_my_results(base_dir,
 
 
 def main():
-    base_dir = r'C:\Users\dori\Documents\SNC\data\train_demo'
-    full_images_dir = r'C:\Users\dori\Documents\SNC\data\train\full'
+    base_dir = r''
+    full_images_dir = r'C:\Users\user\Desktop\mobileye-project-mobileye-group-1\leftImg8bit'
     model_name = 'my_model_final_2'
     train_dataset = TrafficLightDataSet(base_dir, full_images_dir, is_train=True)
     test_dataset = TrafficLightDataSet(base_dir, full_images_dir, is_train=False)

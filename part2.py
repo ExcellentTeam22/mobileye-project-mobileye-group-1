@@ -72,25 +72,26 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int,color:str):
     x_size = 20
     y_size = 30
     im = Image.open(SRC_PATH+'/'+img_path)
- #   im=change_size(im1,x,y,zoom)
-
 
     label_name = img_path.replace("leftImg8bit", "gtFine_color")
 
-    im_label1 = Image.open(FILTER_PATH+'/'+label_name)
+    im_label = Image.open(FILTER_PATH+'/'+label_name)
 
-    width, height = im.size
+    pixel_arr = np.array(im)
+    save_image = im.crop((x - x_size / zoom, y - y_size / zoom,x + x_size / zoom, y + y_size / zoom))
+    im_label = Image.fromarray(np.uint8(save_image)).convert('RGB')
+    im_label = im.resize((30, 40), Image.Resampling.LANCZOS)
 
+    plt.imshow(im_label)
+    plt.show()
 
-    pixel_arr = np.array(im_label1)
-    im_label = clipped_zoom(pixel_arr, zoom)
+    #im_label = clipped_zoom(pixel_arr, zoom)
 
-    data = Image.fromarray(im_label)
-   # plt.imshow(data)
-    #plt.show()
-    im_label=data
+   # data = Image.fromarray(im_label)
 
-    im_of_label = im_label.crop((x-x_size, y-y_size, x+x_size, y+y_size))
+    #im_label = data
+
+  #  im_of_label = im_label.crop((x - x_size / zoom, y - y_size / zoom,x + x_size / zoom, y + y_size / zoom))
 
 
     #pixel_arr = clipped_zoom(pixel_arr_without_zoom ,zoom)
@@ -108,7 +109,7 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int,color:str):
         result = "False"
 
     im.crop((x - x_size, y - y_size, x + x_size, y + y_size)).save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + ".png", format="png")
-    im_of_label.save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + "label.png", format="png")
+   # im_of_label.save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + "label.png", format="png")
     return result
 
 
