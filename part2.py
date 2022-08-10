@@ -22,8 +22,8 @@ except ImportError:
     print("Need to fix the installation")
     raise
 
-FILTER_PATH = 'gtFine_trainvaltest/gtFine/train/aachen'
-SRC_PATH = 'leftImg8bit/train/aachen'
+FILTER_PATH = 'gtFine_trainvaltest/gtFine/train/new'
+SRC_PATH = 'leftImg8bit/train/new'
 
 
 
@@ -48,7 +48,7 @@ def crop_images_from_table():
     for index, row in df.iterrows():
         if row['x'] is None:
             continue
-        if str(row["path"]):
+        if str(row["path"]).startswith("bochum") or str(row["path"]).startswith("aachen") or str(row["path"]).startswith("bremen"):
             result_of_image = crop_image(row['path'], int(row['x']), int(row['y']), row['zoom'], index,row['col'])
             if result_of_image == 'True':
                 is_true = 1
@@ -77,28 +77,13 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int,color:str):
 
     im_label = Image.open(FILTER_PATH+'/'+label_name)
 
-    pixel_arr = np.array(im)
-    save_image = im.crop((x - x_size / zoom, y - y_size / zoom,x + x_size / zoom, y + y_size / zoom))
-    im_label = Image.fromarray(np.uint8(save_image)).convert('RGB')
-    im_label = im.resize((30, 40), Image.Resampling.LANCZOS)
+    pixel_arr = im.crop((x - x_size / zoom, y - y_size / zoom, x + x_size / zoom, y + y_size / zoom))
 
-    plt.imshow(im_label)
-    plt.show()
-
-    #im_label = clipped_zoom(pixel_arr, zoom)
-
-   # data = Image.fromarray(im_label)
-
-    #im_label = data
-
-  #  im_of_label = im_label.crop((x - x_size / zoom, y - y_size / zoom,x + x_size / zoom, y + y_size / zoom))
-
-
-    #pixel_arr = clipped_zoom(pixel_arr_without_zoom ,zoom)
-
-    save_orange_pixel = np.where(pixel_arr == [250, 170, 30, 255])
-
+    im = im.resize((30, 40))
     num_of_orange_pixel_in_image = check_orange_in_relation_to_picture(im_label, x, y, zoom)
+    save_arr=np.array(im_label)
+    save_orange_pixel = np.where(save_arr == [250, 170, 30, 255])
+
 
     if len(save_orange_pixel[0])/num_of_orange_pixel_in_image*100 > 60:
         result = "True"
@@ -108,25 +93,19 @@ def crop_image(img_path: str, x: int, y: int, zoom: int, index: int,color:str):
     else:
         result = "False"
 
-    im.crop((x - x_size, y - y_size, x + x_size, y + y_size)).save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + ".png", format="png")
-   # im_of_label.save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + "label.png", format="png")
+    im.save("crop_images/" + img_path.replace('leftImg8bit.png','') + color+result[0]+str(index) + ".png", format="png")
     return result
 
 
 def check_orange_in_relation_to_picture(image: Image, x, y, zoom):
     pixel_arr = np.array(image.convert('L'))
-
-    #pixel_arr = clipped_zoom( pixel_arr_without_zoom , zoom)
-
     labs = measure.label(pixel_arr)
     temp = labs[int(y)][int(x)]
     num_of_orange_pixel = np.count_nonzero(labs == temp)
     return num_of_orange_pixel
 
-    #def check_valid(x,y,add_to_x,add_to_y,image_height,image_width):
-    #  if x + add_to_x >image_width:
 
-def change_size(img,x,y, zoom_factor):
+def change_size(img, x, y, zoom_factor):
     w, h = img.size
     zoom2 = zoom_factor*2
     img = img.crop((x - w / zoom2, y - h / zoom2,
@@ -134,56 +113,6 @@ def change_size(img,x,y, zoom_factor):
     w, h = img.size
 
     return img.resize((w, h), Image.Resampling.LANCZOS)
-
-
-
-
-
-def clipped_zoom(img, zoom_factor, **kwargs):
-
-    h, w = img.shape[:2]
-
-    # For multichannel images we don't want to apply the zoom factor to the RGB
-    # dimension, so instead we create a tuple of zoom factors, one per array
-    # dimension, with 1's for any trailing dimensions after the width and height.
-    zoom_tuple = (zoom_factor,) * 2 + (1,) * (img.ndim - 2)
-
-    # Zooming out
-    if zoom_factor < 1:
-
-        # Bounding box of the zoomed-out image within the output array
-        zh = int(np.round(h * zoom_factor))
-        zw = int(np.round(w * zoom_factor))
-        top = (h - zh) // 2
-        left = (w - zw) // 2
-
-        # Zero-padding
-        out = np.zeros_like(img)
-        out[top:top+zh, left:left+zw] = zoom(img, zoom_tuple, **kwargs)
-
-    # Zooming in
-    elif zoom_factor > 1:
-
-        # Bounding box of the zoomed-in region within the input array
-        zh = int(np.round(h / zoom_factor))
-        zw = int(np.round(w / zoom_factor))
-        top = (h - zh) // 2
-        left = (w - zw) // 2
-
-        out = zoom(img[top:top+zh, left:left+zw], zoom_tuple, **kwargs)
-
-        # `out` might still be slightly larger than `img` due to rounding, so
-        # trim off any extra pixels at the edges
-        trim_top = ((out.shape[0] - h) // 2)
-        trim_left = ((out.shape[1] - w) // 2)
-        out = out[trim_top:trim_top+h, trim_left:trim_left+w]
-
-    # If zoom_factor == 1, just return the input array
-    else:
-        out = img
-    return out
-
-
 
 
 if __name__ == '__main__':
